@@ -39,10 +39,7 @@ namespace MyBot
             _LastExecution = CurrentTime().AddMinutes(-_LoreDelay);
 
             _DateDelay = int.Parse(File.ReadAllText("DateDelayDays.txt"));
-            _LastDateExecution = CurrentTime().AddDays(_DateDelay);
-
-            Console.WriteLine();
-            
+            _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
 
             var config = new DiscordSocketConfig
             {
@@ -62,9 +59,9 @@ namespace MyBot
                 {
                     await Task.Delay((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
 
-                    UpdateDate(_client);
+                    await UpdateDate(_client);
 
-                    _LastDateExecution = CurrentTime().AddDays(_DateDelay);
+                    _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
                 }
             });
 
