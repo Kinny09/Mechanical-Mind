@@ -7,6 +7,8 @@ using System.Timers;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Channels;
 
 namespace MyBot
 {
@@ -14,10 +16,13 @@ namespace MyBot
     {
         private DateTime CurrentTime() { return DateTime.Now; }
         
-        private int _Delay; //This is in minutes
+        private int _LoreDelay; //This is in minutes
         private DateTime _LastExecution;
 
         private List<string> _lore;
+
+        private int _DateDelay; //This is in days
+        private DateTime _LastDateExecution;
 
         private Random _Random = new Random();
 
@@ -29,8 +34,15 @@ namespace MyBot
         public async Task MainAsync()
         {
             _lore = File.ReadAllLines("Lore.txt").ToList();
-            _Delay = int.Parse(File.ReadAllText("DelayMinutes.txt"));
-            _LastExecution = CurrentTime().AddMinutes(-_Delay);
+
+            _LoreDelay = int.Parse(File.ReadAllText("LoreDelayMinutes.txt"));
+            _LastExecution = CurrentTime().AddMinutes(-_LoreDelay);
+
+            _DateDelay = int.Parse(File.ReadAllText("DateDelayDays.txt"));
+            _LastDateExecution = CurrentTime().AddDays(_DateDelay);
+
+            Console.WriteLine();
+            
 
             var config = new DiscordSocketConfig
             {
@@ -42,6 +54,20 @@ namespace MyBot
             _client.Log += Log;
             _client.UserJoined += AnnounceUserJoined;
             _client.MessageReceived += HandleMessageReceived;
+            _client.UserLeft += AnnounceUserLeft;
+
+            var updateTheDateLoop = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    Console.WriteLine((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
+                    await Task.Delay((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
+
+                    UpdateDate(_client);
+
+                    _LastDateExecution = CurrentTime().AddDays(_DateDelay);
+                }
+            });
 
             var token = "MTAwOTA1ODE0OTU2MDQ5MjAzMw.G_PzH8.k3cfHe2_XxY7yHc_Y1c3dYc0NhmD2ydbN2MK24";
             await _client.LoginAsync(TokenType.Bot, token);
@@ -68,6 +94,15 @@ namespace MyBot
             }
         }
 
+        private static async Task AnnounceUserLeft(SocketGuild guild, SocketUser user)
+        {
+            var channel = guild.GetTextChannel(1253001214807904357);
+            if (channel != null)
+            {
+                await channel.SendMessageAsync($"Goodbye {user.Mention} it was nice knowing you!");
+            }
+        }
+
         private async Task HandleMessageReceived(SocketMessage message)
         {
             if (message.MentionedUsers.Any(u => u.Id == _client.CurrentUser.Id))
@@ -84,6 +119,24 @@ namespace MyBot
             }
         }
 
+        private async Task UpdateDate(DiscordSocketClient _client)
+        {
+            var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
+
+            int currentDate = int.Parse(File.ReadAllText("CurrentDate.txt"));
+            int newDate = currentDate += 1;
+
+            using (StreamWriter writer = new StreamWriter("CurrentDate.txt"))
+            {
+                writer.WriteLine(newDate);
+            }
+
+            if (channel != null)
+            {
+                await channel.SendMessageAsync($"# The year now {currentDate} \n Happy new year!");
+            }
+        }
+
         private Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
@@ -93,9 +146,9 @@ namespace MyBot
         private bool CooldownMethod()
         {
             Console.WriteLine(_LastExecution);
-            Console.WriteLine($"{_LastExecution.AddMinutes(_Delay)}< {CurrentTime()}");
+            Console.WriteLine($"{_LastExecution.AddMinutes(_LoreDelay)}< {CurrentTime()}");
 
-            if (_LastExecution.AddMinutes(_Delay) <= CurrentTime())
+            if (_LastExecution.AddMinutes(_LoreDelay) <= CurrentTime())
             {
                 _LastExecution = CurrentTime();
                 return true;

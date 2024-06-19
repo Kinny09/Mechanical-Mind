@@ -16,7 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DelayMinutes.txt">
+    <None Update="DateDelayDays.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CurrentDate.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="LoreDelayMinutes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Lore.txt">
