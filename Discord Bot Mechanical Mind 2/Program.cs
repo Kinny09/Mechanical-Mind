@@ -60,7 +60,6 @@ namespace MyBot
             {
                 while (true)
                 {
-                    Console.WriteLine((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
                     await Task.Delay((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
 
                     UpdateDate(_client);
