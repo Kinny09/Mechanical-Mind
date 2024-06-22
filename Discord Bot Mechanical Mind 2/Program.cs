@@ -41,6 +41,8 @@ namespace MyBot
             _DateDelay = int.Parse(File.ReadAllText("DateDelayDays.txt"));
             _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
 
+            Console.WriteLine((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
+
             var config = new DiscordSocketConfig
             {
                 //LogLevel = LogSeverity.Debug,
@@ -51,23 +53,21 @@ namespace MyBot
             _client.Log += Log;
             _client.UserJoined += AnnounceUserJoined;
             _client.MessageReceived += HandleMessageReceived;
-            _client.UserLeft += AnnounceUserLeft;
+            _client.UserLeft += AnnounceUserLeft;      
+
+            var token = File.ReadAllText("Token.txt");
+            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.StartAsync();
 
             var updateTheDateLoop = Task.Run(async () =>
             {
                 while (true)
-                {
+                {                  
                     await Task.Delay((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
-
-                    await UpdateDate(_client);
-
+                    UpdateDate(_client);
                     _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
                 }
             });
-
-            var token = "MTAwOTA1ODE0OTU2MDQ5MjAzMw.G_PzH8.k3cfHe2_XxY7yHc_Y1c3dYc0NhmD2ydbN2MK24";
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
 
             //Console.WriteLine($"Logged in as {_client.CurrentUser?.Username}");
 
@@ -115,7 +115,7 @@ namespace MyBot
             }
         }
 
-        private async Task UpdateDate(DiscordSocketClient _client)
+        private async Task UpdateDate(DiscordSocketClient _client) //Make it so it updates at a set time every day instead of after a certain amount of time
         {
             var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
 
