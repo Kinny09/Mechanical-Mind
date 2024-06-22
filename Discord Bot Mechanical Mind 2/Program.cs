@@ -39,7 +39,7 @@ namespace MyBot
             _LastExecution = CurrentTime().AddMinutes(-_LoreDelay);
 
             _DateDelay = int.Parse(File.ReadAllText("DateDelayDays.txt"));
-            _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
+            _LastDateExecution = CurrentTime().AddDays(_DateDelay);
 
             Console.WriteLine((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
 
@@ -65,7 +65,7 @@ namespace MyBot
                 {                  
                     await Task.Delay((int)_LastDateExecution.Subtract(DateTime.Now).TotalMilliseconds);
                     UpdateDate(_client);
-                    _LastDateExecution = CurrentTime().AddMinutes(_DateDelay);
+                    _LastDateExecution = CurrentTime().AddDays(_DateDelay);
                 }
             });
 
