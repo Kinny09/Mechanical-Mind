@@ -19,7 +19,7 @@ namespace DiscordBot
         private Random random = new Random();
 
         //Collecting all the information the bot needs and creating the variables
-        private string token = File.ReadAllText("Token.txt");
+        private string token = File.ReadAllText("Token.txt").Trim();
 
         private List<string> listOfLoreStrings = File.ReadAllLines("Lore.txt").ToList();
         private int loreTimeDelayMinutes = int.Parse(File.ReadAllText("LoreDelayMinutes.txt"));
