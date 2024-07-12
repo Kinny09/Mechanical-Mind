@@ -60,28 +60,6 @@ namespace DiscordBot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
-            //Loop for updating the date
-            //var updateTheDateLoop = Task.Run(async () =>
-            //{
-            //    while (true)
-            //    {
-            //        Console.WriteLine((60 - CurrentTime().Minute) * 60000);
-            //        int millisecondDelay = (60 - CurrentTime().Minute) * 60000;
-            //        await Task.Delay(millisecondDelay);
-            //        Console.WriteLine("\nContinuing\n");
-
-            //        if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) >= dateTriggerTime)
-            //        {
-            //            Console.WriteLine("\nTRUE\n");
-            //            await UpdateDate(_client);
-
-            //            dateInformation = GetDateInformation();
-            //            currentDate = int.Parse(dateInformation[0]);
-            //            lastDateTrigger = DateOnly.Parse(dateInformation[3]);
-            //        }
-            //    }
-            //});
-
             await Task.Delay(-1);
         }
 
@@ -128,15 +106,11 @@ namespace DiscordBot
         {
             while (true)
             {
-                Console.WriteLine((60 - CurrentTime().Minute) * 60000);
-                int millisecondDelay = (60 - CurrentTime().Minute) * 60000;
-                await Task.Delay(millisecondDelay);
-                Console.WriteLine("\nContinuing\n");
+                int millisecondDelay = (60 - CurrentTime().Minute) * 60000; //Calculating how long the delay should be, the bot checks the time and date every hour
+                await Task.Delay(millisecondDelay); //The delay
 
                 if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) >= dateTriggerTime)
                 {
-                    Console.WriteLine("\nTRUE\n");
-
                     var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
 
                     List<string> dateInformation = GetDateInformation();
@@ -153,7 +127,7 @@ namespace DiscordBot
 
                     if (channel != null)
                     {
-                        await channel.SendMessageAsync($"# The year is now {newDate} \n Happy new year!");
+                        await channel.SendMessageAsync($"<@&1251897850229690458> \n # The year is now {newDate} \n Happy new year! \n & ");
                     }
 
                     dateInformation = GetDateInformation();
