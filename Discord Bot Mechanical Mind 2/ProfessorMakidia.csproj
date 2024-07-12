@@ -16,8 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="CurrentDate.txt">
+    <Compile Update="Main.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="CurrentDate.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Token.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

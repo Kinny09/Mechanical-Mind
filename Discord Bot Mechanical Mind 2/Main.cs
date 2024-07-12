@@ -54,31 +54,33 @@ namespace DiscordBot
             _client.UserJoined += AnnounceUserJoined;
             _client.MessageReceived += PostALoreSnippet;
             _client.UserLeft += AnnounceUserLeft;
+            _client.Ready += UpdateDateLoop;
 
             //Starting the bot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
             //Loop for updating the date
-            var updateTheDateLoop = Task.Run(async () =>
-            {
-                Console.WriteLine(TimeOnly.FromDateTime(CurrentTime()));
+            //var updateTheDateLoop = Task.Run(async () =>
+            //{
+            //    while (true)
+            //    {
+            //        Console.WriteLine((60 - CurrentTime().Minute) * 60000);
+            //        int millisecondDelay = (60 - CurrentTime().Minute) * 60000;
+            //        await Task.Delay(millisecondDelay);
+            //        Console.WriteLine("\nContinuing\n");
 
-                while (true)
-                {
-                    int millisecondDelay = (60 - CurrentTime().Minute) * 60000;
-                    await Task.Delay(millisecondDelay);
+            //        if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) >= dateTriggerTime)
+            //        {
+            //            Console.WriteLine("\nTRUE\n");
+            //            await UpdateDate(_client);
 
-                    if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) == dateTriggerTime)
-                    {
-                        UpdateDate(_client);
-
-                        dateInformation = GetDateInformation();
-                        currentDate = int.Parse(dateInformation[0]);
-                        lastDateTrigger = DateOnly.Parse(dateInformation[3]);
-                    }
-                }
-            });
+            //            dateInformation = GetDateInformation();
+            //            currentDate = int.Parse(dateInformation[0]);
+            //            lastDateTrigger = DateOnly.Parse(dateInformation[3]);
+            //        }
+            //    }
+            //});
 
             await Task.Delay(-1);
         }
@@ -122,25 +124,42 @@ namespace DiscordBot
             }
         }
 
-        private async Task UpdateDate(DiscordSocketClient _client)
+        private async Task UpdateDateLoop()
         {
-            var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
-
-            List<string> dateInformation = GetDateInformation();
-            currentDate = int.Parse(dateInformation[0]);
-            int newDate = currentDate += 1;
-
-            using (StreamWriter writer = new StreamWriter("CurrentDate.txt"))
+            while (true)
             {
-                writer.WriteLine(newDate);
-                writer.WriteLine(dateInformation[1]);
-                writer.WriteLine(dateInformation[2]);
-                writer.WriteLine(DateOnly.FromDateTime(CurrentTime()));
-            }
+                Console.WriteLine((60 - CurrentTime().Minute) * 60000);
+                int millisecondDelay = (60 - CurrentTime().Minute) * 60000;
+                await Task.Delay(millisecondDelay);
+                Console.WriteLine("\nContinuing\n");
 
-            if (channel != null)
-            {
-                await channel.SendMessageAsync($"# The year now {currentDate} \n Happy new year!");
+                if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) >= dateTriggerTime)
+                {
+                    Console.WriteLine("\nTRUE\n");
+
+                    var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
+
+                    List<string> dateInformation = GetDateInformation();
+                    currentDate = int.Parse(dateInformation[0]);
+                    int newDate = currentDate + 1;
+
+                    using (StreamWriter writer = new StreamWriter("CurrentDate.txt"))
+                    {
+                        writer.WriteLine(newDate);
+                        writer.WriteLine(dateInformation[1]);
+                        writer.WriteLine(dateInformation[2]);
+                        writer.WriteLine(DateOnly.FromDateTime(CurrentTime()));
+                    }
+
+                    if (channel != null)
+                    {
+                        await channel.SendMessageAsync($"# The year is now {newDate} \n Happy new year!");
+                    }
+
+                    dateInformation = GetDateInformation();
+                    currentDate = int.Parse(dateInformation[0]);
+                    lastDateTrigger = DateOnly.Parse(dateInformation[3]);
+                }
             }
         }
 
