@@ -88,11 +88,12 @@ namespace DiscordBot
         {
             var guild = user.Guild;
             var channel = guild.GetTextChannel(1251900740075655269);
+            await Task.Delay(100);
             if (channel != null)
             {
-                await channel.SendMessageAsync($"Welcome {user.Mention} to {guild.Name}! Head over to <#1012490936347009135> and <#1012380840380088371> to learn about the rules and setting of the world.\n" +
+                await channel.SendMessageAsync($"Welcome {user.Mention} to {guild.Name}! Head over to <#1251899086723092510> to learn about the rules and <#1251899167446401055> to learn about the setting of the world!\n" +
                     $"\n" +
-                    $"If you wanna take part in current ongoing RP, head over to <#1046585931584507924> to learn about it, and go to <#1048025572539912272> to submit a character!");
+                    $"Once you've done that you can head to <#1251914497082396743> to create or nation, or...if you want to continue reading about the mechanics and lore of the world, you can go to <#1259886504214397040> or <#1251910530520846478>!");
             }
         }
 
