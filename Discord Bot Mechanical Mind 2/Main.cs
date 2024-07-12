@@ -109,7 +109,15 @@ namespace DiscordBot
                 int millisecondDelay = (60 - CurrentTime().Minute) * 60000; //Calculating how long the delay should be, the bot checks the time and date every hour
                 await Task.Delay(millisecondDelay); //The delay
 
-                if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && TimeOnly.FromDateTime(CurrentTime()) >= dateTriggerTime)
+                Console.WriteLine($"{DateOnly.FromDateTime(CurrentTime())} >= {lastDateTrigger.AddDays(dateTimeDelayDays)}");
+                Console.WriteLine(DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays));
+
+                TimeOnly timeNow = TimeOnly.FromDateTime(CurrentTime());
+
+                Console.WriteLine($"{timeNow} >= {dateTriggerTime.AddMinutes(-1)} && {timeNow} <= {dateTriggerTime.AddMinutes(1)}");
+                Console.WriteLine(timeNow >= dateTriggerTime.AddMinutes(-1) && timeNow <= dateTriggerTime.AddMinutes(1));
+
+                if (DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays) && (timeNow >= dateTriggerTime.AddMinutes(-1) && timeNow <= dateTriggerTime.AddMinutes(1)))
                 {
                     var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
 
@@ -127,7 +135,7 @@ namespace DiscordBot
 
                     if (channel != null)
                     {
-                        await channel.SendMessageAsync($"<@&1251897850229690458> \n # The year is now {newDate} \n Happy new year! \n & ");
+                        await channel.SendMessageAsync($"# The year is now {newDate} \n Happy new year! \n <@&1251897850229690458>");
                     }
 
                     dateInformation = GetDateInformation();
