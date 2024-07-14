@@ -37,7 +37,7 @@ namespace DiscordBot
             => new ProfessorMakidia().MainAsync().GetAwaiter().GetResult();
 
         public async Task MainAsync()
-        {
+        { 
             //Bot configering
             var config = new DiscordSocketConfig { AlwaysDownloadUsers = true, GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildMessages };
             _client = new DiscordSocketClient(config);
@@ -109,6 +109,13 @@ namespace DiscordBot
                 int millisecondDelay = (60 - CurrentTime().Minute) * 60000; //Calculating how long the delay should be, the bot checks the time and date every hour
                 await Task.Delay(millisecondDelay); //The delay
 
+                //Updating all the date triggers and information
+                List<string> dateInformation = GetDateInformation();
+                currentDate = int.Parse(dateInformation[0]);
+                dateTimeDelayDays = int.Parse(dateInformation[1]);
+                dateTriggerTime = TimeOnly.Parse(dateInformation[2]);
+                lastDateTrigger = DateOnly.Parse(dateInformation[3]);
+
                 Console.WriteLine($"{DateOnly.FromDateTime(CurrentTime())} >= {lastDateTrigger.AddDays(dateTimeDelayDays)}");
                 Console.WriteLine(DateOnly.FromDateTime(CurrentTime()) >= lastDateTrigger.AddDays(dateTimeDelayDays));
 
@@ -121,8 +128,6 @@ namespace DiscordBot
                 {
                     var channel = _client.GetChannel(1253022447880372254) as IMessageChannel;
 
-                    List<string> dateInformation = GetDateInformation();
-                    currentDate = int.Parse(dateInformation[0]);
                     int newDate = currentDate + 1;
 
                     using (StreamWriter writer = new StreamWriter("CurrentDate.txt"))
