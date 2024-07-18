@@ -82,7 +82,7 @@ namespace DiscordBot
             var channel = guild.GetTextChannel(1253001214807904357);
             if (channel != null)
             {
-                await channel.SendMessageAsync($"Goodbye {user.Mention} it was nice knowing you!");
+                await channel.SendMessageAsync($"Goodbye {user.Mention} ({user.Username}) it was nice knowing you!");
             }
         }
 
