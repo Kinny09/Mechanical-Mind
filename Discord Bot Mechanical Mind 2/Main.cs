@@ -75,6 +75,8 @@ namespace DiscordBot
                     $"\n" +
                     $"Once you've done that you can head to <#1251914497082396743> to create or nation, or...if you want to continue reading about the mechanics and lore of the world, you can go to <#1259886504214397040> or <#1251910530520846478>!");
             }
+
+            await user.AddRoleAsync(1263630944422727794);
         }
 
         private static async Task AnnounceUserLeft(SocketGuild guild, SocketUser user)
